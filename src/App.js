@@ -1,13 +1,11 @@
 /* eslint-disable */
-
-import { useState } from 'react';
 import './App.css';
-import Apple from './hello/Apple';
-
+import {VacationForm, VacationList} from './component/Vacation.js';
 function App() {
   return (
     <div className="App">
-      <Apple></Apple>
+      <VacationForm></VacationForm>
+      <VacationList></VacationList>
     </div>
   );
 }

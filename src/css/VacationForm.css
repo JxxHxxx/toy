@@ -1,0 +1,42 @@
+/* VacationForm.css */
+
+.form-container {
+    max-width: 600px; /* 너비를 조정할 수 있습니다 */
+    margin: 0 auto; /* 가로 중앙 정렬 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-container .form-field {
+    margin-bottom: 10px;
+}
+
+.form-container label {
+    display: block; /* 라벨을 블록 수준 요소로 설정하여 한 줄에 하나씩 표시되도록 함 */
+}
+
+.form-container input[type="text"],
+.form-container input[type="date"] {
+    width: calc(100% - 20px); /* 너비에 따라 조절 */
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-container input[type="submit"] {
+    width: calc(100% - 20px); /* 너비에 따라 조절 */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-container input[type="submit"]:hover {
+    background-color: #0056b3;
+}
