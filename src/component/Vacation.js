@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { getVacationOne, postVacationForm } from "../api/VacationApi";
+import { getVacations, postVacationForm } from "../api/VacationApi";
 import { dateToDatetime } from "../converter/RequestConverter";
 import "../css/VacationForm.css"
+import "../css/VacationList.css"
+
 
 const VacationForm = () => {
     const [form, setForm] = useState({
@@ -39,7 +41,7 @@ const VacationForm = () => {
     };
 
     return (
-        <div className="form-container">
+        <div className="form-container" id="form">
             <form onSubmit={onSubmit}>
                 <fieldset>
                     <legend>휴가 신청</legend>
@@ -74,68 +76,56 @@ const VacationForm = () => {
 };
 
 const VacationList = () => {
+    const [memberId, setMemberId] = useState('');
     const [vacationId, setVacationId] = useState('');
-    const [vacation, setVacation] = useState({
-        vacationId : '',
-        requesterId : '',
-        vacationDuration : {
-            vacationType: '',
-            startDateTime: '',
-            endDateTime: ''
-        },
-        deducted: '',
-        vacationStatus : ''
+    const [vacations, setVacations] = useState([]);
+
+    const vacationRows = vacations.map((vacation) => {
+        const startDate = new Date(vacation.vacationDuration.startDateTime).toISOString().split('T')[0];
+        const endDate = new Date(vacation.vacationDuration.endDateTime).toISOString().split('T')[0];
+
+        return <tr key={vacation.vacationId}>
+            <td>{vacation.requesterName}</td>
+            <td>{startDate}</td>
+            <td>{endDate}</td>
+        </tr>
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = getVacationOne(vacationId); // vacationId를 이용하여 데이터 가져오기
-            setVacation(data); // 가져온 데이터를 상태에 설정
-            console.log("22222", vacation);
-            console.log("333333" , vacation);
-        } catch (error) {
-            console.error('Failed to fetch vacation:', error.message);
+            const findVacations = await getVacations(memberId);
+            setVacations(findVacations);
+        } catch (err) {
+            console.error(err);
         }
     }
 
     return (
-        <div className="table-container">
-            <form onSubmit={handleSubmit}>
+        <div className="table-container" id="list">
+            <form className="form-container" onSubmit={handleSubmit}>
+                <label>
+                    멤버 ID:
+                    <input type="text" value={memberId} onChange={(e) => setMemberId(e.target.value)} />
+                </label>
                 <label>
                     휴가 ID:
                     <input type="text" value={vacationId} onChange={(e) => setVacationId(e.target.value)} />
                 </label>
                 <button type="submit">검색</button>
             </form>
-
-            {/* 데이터가 존재하는 경우에만 테이블 표시 */}
-            {vacation.vacationId && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>휴가 ID</th>
-                            <th>신청자 ID</th>
-                            <th>휴가 유형</th>
-                            <th>시작 일시</th>
-                            <th>종료 일시</th>
-                            <th>차감 일수</th>
-                            <th>휴가 상태</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{vacation.vacationId}</td>
-                            <td>{vacation.requesterId}</td>
-                            <td>{vacation.vacationDuration.vacationType}</td>
-                            <td>{vacation.vacationDuration.startDateTime}</td>
-                            <td>{vacation.vacationDuration.endDateTime}</td>
-                            <td>{vacation.deducted}</td>
-                            <td>{vacation.vacationStatus}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            )}
+            <table>
+                <thead>
+                    <tr>
+                        <th>신청자 이름</th>
+                        <th>시작 일시</th>
+                        <th>종료 일시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {vacationRows}
+                </tbody>
+            </table>
         </div>
     );
 };

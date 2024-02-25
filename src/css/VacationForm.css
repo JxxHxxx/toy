@@ -1,7 +1,7 @@
 /* VacationForm.css */
 
 .form-container {
-    max-width: 600px; /* 너비를 조정할 수 있습니다 */
+    max-width: 360px; /* 너비를 조정할 수 있습니다 */
     margin: 0 auto; /* 가로 중앙 정렬 */
     padding: 20px;
     border: 1px solid #ccc;

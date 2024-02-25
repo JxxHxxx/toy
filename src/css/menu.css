@@ -1,0 +1,16 @@
+.menuContainer {
+    width: 360px;
+    margin: 0 auto;
+    display: flex;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff; /* 필요에 따라 배경색 지정 */
+    z-index: 1000; /* 다른 요소 위에 표시되도록 z-index 설정 */
+}
+
+.menuContainer .menu {
+    width: 50px;
+}
