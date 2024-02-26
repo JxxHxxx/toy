@@ -1,0 +1,14 @@
+.react-calendar {
+    width: 360px;
+    margin:0 auto
+}
+
+#cal {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.full-cal {
+    width: 90%;
+    margin: 0 auto;
+}

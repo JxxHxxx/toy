@@ -1,5 +1,6 @@
 .table-container {
     margin-top: 20px;
+    margin-bottom: 150px;
     text-align: center;
 }
 
@@ -30,14 +31,21 @@ tr:hover {
     background-color: #ddd;
 }
 
-.table-container .form-container {
+.table-container .vacation-search-form {
+    padding-top: 20px;
+    border: 1px solid red;
     width: 360px;
     margin: auto;
 }
 
-.table-container .form-container input[type="text"], ..table-container form-container input[type="date"] {
-    width: 80%; /* 또는 다른 너비 값으로 조절 */
-    padding: 10px; /* 적절한 패딩 값으로 조절 */
+.table-container .vacation-search-cond-title {
+    text-align: left;
+    padding-right: 20px;
+}
+
+.table-container .vacation-search-form input[type="text"] {
+    width: 50%; /* 또는 다른 너비 값으로 조절 */
+    padding: 5px; /* 적절한 패딩 값으로 조절 */
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -51,5 +59,3 @@ tr:hover {
 .form-actions {
     margin-top: 20px;
 }
-
-/* Add more styles as needed */

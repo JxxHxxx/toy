@@ -1,0 +1,26 @@
+.Bottom-nav {
+    margin: 0 auto
+}
+
+.side-bar {
+    border: 1px solid red;
+    height: 1200px;
+    width: 20%;
+    transform: translateX(0%);
+    transition: transform 1s ease;
+}
+
+.side-bar-close {
+    border: 1px solid red;
+    background-color: blue;
+    height: 1200px;
+    width: 20%;
+    transform: translateX(-100%);
+    transition: transform 1s ease;
+}
+
+.button-wrapper {
+    position: fixed;
+    top: 20px;
+    right : 50%;
+}

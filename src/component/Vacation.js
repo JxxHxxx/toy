@@ -3,6 +3,7 @@ import { getVacations, postVacationForm } from "../api/VacationApi";
 import { dateToDatetime } from "../converter/RequestConverter";
 import "../css/VacationForm.css"
 import "../css/VacationList.css"
+import { Button, InputLabel, TextField } from "@mui/material";
 
 
 const VacationForm = () => {
@@ -103,17 +104,29 @@ const VacationList = () => {
 
     return (
         <div className="table-container" id="list">
-            <form className="form-container" onSubmit={handleSubmit}>
-                <label>
-                    멤버 ID:
-                    <input type="text" value={memberId} onChange={(e) => setMemberId(e.target.value)} />
-                </label>
-                <label>
-                    휴가 ID:
-                    <input type="text" value={vacationId} onChange={(e) => setVacationId(e.target.value)} />
-                </label>
-                <button type="submit">검색</button>
+            <h2>휴가 검색!</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <TextField 
+                        id="outlined-user" 
+                        label="사용자ID" 
+                        variant="outlined" 
+                        size="small"
+                        margin="dense"
+                        value={memberId} onChange={(e) => setMemberId(e.target.value)}/>
+                </div>
+                <div>
+                   <TextField 
+                    id="outlined-vac" 
+                    label="휴가ID" 
+                    variant="outlined" 
+                    size="small"
+                    margin="dense"
+                    value={vacationId} onChange={(e) => setVacationId(e.target.value)} /> 
+                </div>
+                <Button type="submit">검색</Button>
             </form>
+
             <table>
                 <thead>
                     <tr>
