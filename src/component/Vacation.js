@@ -3,7 +3,8 @@ import { getVacations, postVacationForm } from "../api/VacationApi";
 import { dateToDatetime } from "../converter/RequestConverter";
 import "../css/VacationForm.css"
 import "../css/VacationList.css"
-import { Button, InputLabel, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import { MemberLeave } from "../component/MemberLeave";
 
 
 const VacationForm = () => {
@@ -42,36 +43,40 @@ const VacationForm = () => {
     };
 
     return (
-        <div className="form-container" id="form">
-            <form onSubmit={onSubmit}>
-                <fieldset>
-                    <legend>휴가 신청</legend>
+        <div>
+            <MemberLeave></MemberLeave>
 
-                    <div className="form-field">
-                        <label htmlFor="requesterId">아이디:</label>
-                        <input type="text" id="requesterId" name="requesterId" value={form.requesterId} onChange={onChange} />
-                    </div>
+            <div className="form-container" id="form">
+                <form onSubmit={onSubmit}>
+                    <fieldset>
+                        <legend>휴가 신청</legend>
 
-                    <div className="form-field">
-                        <label htmlFor="vacationType">연차 유형:</label>
-                        <input type="text" id="vacationType" name="vacationType" value={form.vacationDuration.vacationType} onChange={onVacationDurationChange} />
-                    </div>
+                        <div className="form-field">
+                            <label htmlFor="requesterId">아이디:</label>
+                            <input type="text" id="requesterId" name="requesterId" value={form.requesterId} onChange={onChange} />
+                        </div>
 
-                    <div className="form-field">
-                        <label htmlFor="startDateTime">연차 시작 날짜:</label>
-                        <input type="date" id="startDateTime" name="startDateTime" value={form.vacationDuration.startDateTime} onChange={onVacationDurationChange} />
-                    </div>
+                        <div className="form-field">
+                            <label htmlFor="vacationType">연차 유형:</label>
+                            <input type="text" id="vacationType" name="vacationType" value={form.vacationDuration.vacationType} onChange={onVacationDurationChange} />
+                        </div>
 
-                    <div className="form-field">
-                        <label htmlFor="endDateTime">연차 종료 날짜:</label>
-                        <input type="date" id="endDateTime" name="endDateTime" value={form.vacationDuration.endDateTime} onChange={onVacationDurationChange} />
-                    </div>
+                        <div className="form-field">
+                            <label htmlFor="startDateTime">연차 시작 날짜:</label>
+                            <input type="date" id="startDateTime" name="startDateTime" value={form.vacationDuration.startDateTime} onChange={onVacationDurationChange} />
+                        </div>
 
-                    <div className="form-actions">
-                        <input type="submit" value="휴가 신청" />
-                    </div>
-                </fieldset>
-            </form>
+                        <div className="form-field">
+                            <label htmlFor="endDateTime">연차 종료 날짜:</label>
+                            <input type="date" id="endDateTime" name="endDateTime" value={form.vacationDuration.endDateTime} onChange={onVacationDurationChange} />
+                        </div>
+
+                        <div className="form-actions">
+                            <input type="submit" value="휴가 신청" />
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     );
 };
@@ -107,22 +112,22 @@ const VacationList = () => {
             <h2>휴가 검색!</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <TextField 
-                        id="outlined-user" 
-                        label="사용자ID" 
-                        variant="outlined" 
+                    <TextField
+                        id="outlined-user"
+                        label="사용자ID"
+                        variant="outlined"
                         size="small"
                         margin="dense"
-                        value={memberId} onChange={(e) => setMemberId(e.target.value)}/>
+                        value={memberId} onChange={(e) => setMemberId(e.target.value)} />
                 </div>
                 <div>
-                   <TextField 
-                    id="outlined-vac" 
-                    label="휴가ID" 
-                    variant="outlined" 
-                    size="small"
-                    margin="dense"
-                    value={vacationId} onChange={(e) => setVacationId(e.target.value)} /> 
+                    <TextField
+                        id="outlined-vac"
+                        label="휴가ID"
+                        variant="outlined"
+                        size="small"
+                        margin="dense"
+                        value={vacationId} onChange={(e) => setVacationId(e.target.value)} />
                 </div>
                 <Button type="submit">검색</Button>
             </form>

@@ -29,5 +29,15 @@ const getVacationOne = function (memberId, vacationId) {
         .catch(() => console.error('request fail'));
 }
 
+const getMemberLeave = function (memberId) {
+    return fetch(`http://localhost:8080/api/member-leaves/${memberId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => response.json())
+        .catch(() => console.error('request fail'));
+}
 
-export { postVacationForm, getVacations, getVacationOne };
+
+export { postVacationForm, getVacations, getVacationOne, getMemberLeave };
