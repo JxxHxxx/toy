@@ -4,7 +4,7 @@ import { dateToDatetime } from "../converter/RequestConverter";
 import "../css/VacationForm.css"
 import "../css/VacationList.css"
 import { Button, TextField } from "@mui/material";
-import { MemberLeave } from "../component/MemberLeave";
+import { MemberLeaveInfo } from "../component/MemberLeave";
 
 
 const VacationForm = () => {
@@ -44,7 +44,7 @@ const VacationForm = () => {
 
     return (
         <div>
-            <MemberLeave></MemberLeave>
+            <MemberLeaveInfo></MemberLeaveInfo>
 
             <div className="form-container" id="form">
                 <form onSubmit={onSubmit}>
