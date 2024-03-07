@@ -16,8 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { postCreateVacation } from '../api/VacationApi';
-import { useEffect } from 'react';
-import { VacationForm } from './Vacation';
+
 
 const style = {
   position: 'absolute',
@@ -63,7 +62,7 @@ export const VacationRequestModal = () => {
           <div>
             <h2>휴가 유형...(유급, 경조)</h2>
           </div>
-          <VacationCategorySelect></VacationCategorySelect>
+          <VacationCategorySelect vf={{ vacationForm, setVacationForm }}></VacationCategorySelect>
 
           <VacationTypeRadioGroup></VacationTypeRadioGroup>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -73,9 +72,9 @@ export const VacationRequestModal = () => {
                 value={vacationForm.vacationDuration.startDateTime}
                 onChange={(startDate) => setVacationForm((prev) => ({
                   ...prev,
-                  vacationDuration : {
+                  vacationDuration: {
                     ...prev.vacationDuration,
-                    startDateTime : startDate
+                    startDateTime: startDate
                   },
                 }))}
 
@@ -85,9 +84,9 @@ export const VacationRequestModal = () => {
                 value={vacationForm.vacationDuration.endDateTime}
                 onChange={(endDate) => setVacationForm((prev) => ({
                   ...prev,
-                  vacationDuration : {
+                  vacationDuration: {
                     ...prev.vacationDuration,
-                    endDateTime : endDate
+                    endDateTime: endDate
                   },
                 }))}
               />
@@ -109,7 +108,7 @@ export const VacationRequestModal = () => {
   );
 }
 
-export const VacationTypeRadioGroup = ({ onDurationChange }) => {
+export const VacationTypeRadioGroup = () => {
   const [vacationType, setVacationType] = useState('Annual');
 
   const handleAnnual = () => {
@@ -169,22 +168,7 @@ export const VacationDuration = () => {
   );
 }
 
-export const VacationDate = (props) => {
-  const [value, setValue] = useState(dayjs('2024-03-01 09:00'));
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DateTimePicker']}>
-        <DateTimePicker
-          label={props.label}
-          value={value}
-          onChange={(newValue) => setValue(newValue)}
-        />
-      </DemoContainer>
-    </LocalizationProvider>
-  );
-}
-export const VacationCategorySelect = () => {
+export const VacationCategorySelect = (props) => {
   const [vacationCategory, setVacationCategory] = useState('basic');
 
   const handleChange = (event) => {
