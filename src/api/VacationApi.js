@@ -39,5 +39,17 @@ const getMemberLeave = function (memberId) {
         .catch(() => console.error('request fail'));
 }
 
+const postCreateVacation = function (requestBody) {
+    return fetch(`http://localhost:8080/api/vacations`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body : JSON.stringify(requestBody)
 
-export { postVacationForm, getVacations, getVacationOne, getMemberLeave };
+    }).then((response) => response.json())
+        .catch(() => console.error('request fail'));
+}
+
+
+export { postVacationForm, getVacations, getVacationOne, getMemberLeave, postCreateVacation };

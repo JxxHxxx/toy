@@ -15,6 +15,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers';
+import { postCreateVacation } from '../api/VacationApi';
+import { useEffect } from 'react';
+import { VacationForm } from './Vacation';
 
 const style = {
   position: 'absolute',
@@ -31,15 +34,23 @@ const style = {
 
 export const VacationRequestModal = () => {
   const [open, setOpen] = useState(true);
+  const [vacationForm, setVacationForm] = useState({
+    requesterId: sessionStorage.getItem('memberId'),
+    vacationDuration: {
+      vacationType: 'MORE_DAY',
+      startDateTime: dayjs(),
+      endDateTime: dayjs()
+    }
+  });
 
   const handleClose = () => {
     setOpen(false);
-  }
+  };
 
-  // 제출 API 추가해야함
   const hanleSubmit = () => {
+    postCreateVacation(vacationForm);
     setOpen(false);
-  }
+  };
 
   return (
     <div>
@@ -55,8 +66,33 @@ export const VacationRequestModal = () => {
           <VacationCategorySelect></VacationCategorySelect>
 
           <VacationTypeRadioGroup></VacationTypeRadioGroup>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <DatePicker
+                label="Start Date"
+                value={vacationForm.vacationDuration.startDateTime}
+                onChange={(startDate) => setVacationForm((prev) => ({
+                  ...prev,
+                  vacationDuration : {
+                    ...prev.vacationDuration,
+                    startDateTime : startDate
+                  },
+                }))}
+
+              />
+              <DatePicker
+                label="End Date"
+                value={vacationForm.vacationDuration.endDateTime}
+                onChange={(endDate) => setVacationForm((prev) => ({
+                  ...prev,
+                  vacationDuration : {
+                    ...prev.vacationDuration,
+                    endDateTime : endDate
+                  },
+                }))}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
 
 
           <Button onClick={hanleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>작성 완료</Button>
@@ -73,7 +109,7 @@ export const VacationRequestModal = () => {
   );
 }
 
-export const VacationTypeRadioGroup = () => {
+export const VacationTypeRadioGroup = ({ onDurationChange }) => {
   const [vacationType, setVacationType] = useState('Annual');
 
   const handleAnnual = () => {
@@ -100,26 +136,33 @@ export const VacationTypeRadioGroup = () => {
         <FormControlLabel onClick={handleHalf} value="male" control={<Radio />} label="반차" />
         <FormControlLabel onClick={handleQuarter} value="other" control={<Radio />} label="반반차" />
       </RadioGroup>
-      <div>
+      {/* <div>
         {vacationType === 'Annual' && <VacationDuration></VacationDuration>}
         {vacationType === 'Half' && <VacationDate label='half Date'></VacationDate>}
         {vacationType === 'Quarter' && <VacationDate label='Quarter Date'></VacationDate>}
-      </div>
+      </div> */}
     </FormControl>
   );
 }
 
 export const VacationDuration = () => {
-  const [value, setValue] = useState(dayjs('2024-03-01'));
+  const [startDate, setStartDate] = useState(dayjs('2024-03-01'));
+  const [endDate, setEndDate] = useState(dayjs('2024-03-01'));
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={['DatePicker', 'DatePicker']}>
-        <DatePicker label="Start Date" defaultValue={dayjs('2024-03-01')} />
+        <DatePicker
+          label="Start Date"
+          defaultValue={dayjs('2024-03-01')}
+          value={endDate}
+          onChange={(newValue) => setEndDate(newValue)}
+
+        />
         <DatePicker
           label="End Date"
-          value={value}
-          onChange={(newValue) => setValue(newValue)}
+          value={startDate}
+          onChange={(newValue) => setStartDate(newValue)}
         />
       </DemoContainer>
     </LocalizationProvider>
