@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -14,9 +13,8 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DateTimePicker } from '@mui/x-date-pickers';
 import { postCreateVacation } from '../api/VacationApi';
-
+import 'dayjs/locale/ko';
 
 const style = {
   position: 'absolute',
@@ -37,8 +35,8 @@ export const VacationRequestModal = () => {
     requesterId: sessionStorage.getItem('memberId'),
     vacationDuration: {
       vacationType: 'MORE_DAY',
-      startDateTime: dayjs(),
-      endDateTime: dayjs()
+      startDateTime: dayjs().add(9, 'hour'),
+      endDateTime: dayjs().add(9, 'hour')
     }
   });
 
@@ -65,7 +63,7 @@ export const VacationRequestModal = () => {
           <VacationCategorySelect vf={{ vacationForm, setVacationForm }}></VacationCategorySelect>
 
           <VacationTypeRadioGroup></VacationTypeRadioGroup>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DemoContainer components={['DatePicker', 'DatePicker']}>
               <DatePicker
                 label="Start Date"
@@ -108,6 +106,39 @@ export const VacationRequestModal = () => {
   );
 }
 
+export const VacationCategorySelect = (props) => {
+
+  return (
+    <Box sx={{ minWidth: 120 }}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">휴가 유형</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={props.vf.vacationForm.vacationDuration.vacationType}
+          label="휴가 유형"
+          onChange={(event) => {
+            const selectedValue = event.target.value;
+
+            props.vf.setVacationForm((prev) => ({
+              ...prev,
+              vacationDuration: {
+                ...prev.vacationDuration,
+                vacationType: selectedValue
+              },
+            }));
+          }}
+        >
+          <MenuItem value='MORE_DAY'>일반 휴가 </MenuItem>
+          <MenuItem value='SPEC'>경조사 휴가</MenuItem>
+          <MenuItem value='ETC'>그 외 휴가</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+  );
+}
+
+
 export const VacationTypeRadioGroup = () => {
   const [vacationType, setVacationType] = useState('Annual');
 
@@ -135,62 +166,6 @@ export const VacationTypeRadioGroup = () => {
         <FormControlLabel onClick={handleHalf} value="male" control={<Radio />} label="반차" />
         <FormControlLabel onClick={handleQuarter} value="other" control={<Radio />} label="반반차" />
       </RadioGroup>
-      {/* <div>
-        {vacationType === 'Annual' && <VacationDuration></VacationDuration>}
-        {vacationType === 'Half' && <VacationDate label='half Date'></VacationDate>}
-        {vacationType === 'Quarter' && <VacationDate label='Quarter Date'></VacationDate>}
-      </div> */}
     </FormControl>
-  );
-}
-
-export const VacationDuration = () => {
-  const [startDate, setStartDate] = useState(dayjs('2024-03-01'));
-  const [endDate, setEndDate] = useState(dayjs('2024-03-01'));
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DatePicker', 'DatePicker']}>
-        <DatePicker
-          label="Start Date"
-          defaultValue={dayjs('2024-03-01')}
-          value={endDate}
-          onChange={(newValue) => setEndDate(newValue)}
-
-        />
-        <DatePicker
-          label="End Date"
-          value={startDate}
-          onChange={(newValue) => setStartDate(newValue)}
-        />
-      </DemoContainer>
-    </LocalizationProvider>
-  );
-}
-
-export const VacationCategorySelect = (props) => {
-  const [vacationCategory, setVacationCategory] = useState('basic');
-
-  const handleChange = (event) => {
-    setVacationCategory(event.target.value);
-  };
-
-  return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">휴가 유형</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={vacationCategory}
-          label="휴가 유형"
-          onChange={handleChange}
-        >
-          <MenuItem value={'basic'}>일반 휴가 </MenuItem>
-          <MenuItem value={'cc'}>경조사 휴가</MenuItem>
-          <MenuItem value={'etc'}>그 외 휴가</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
   );
 }

@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import { getMemberLeave } from "../api/VacationApi";
 import { MemberLeaveBar } from "../tmp/Chart";
 import { useLocation } from "react-router-dom";
-
+import { useCookies } from "react-cookie";
 export const MemberLeaveInfo = () => {
     const [memberLeave, setMemberLeave] = useState({
         name: '',

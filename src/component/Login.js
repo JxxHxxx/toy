@@ -30,7 +30,12 @@ export default function SignIn() {
         const res = await postSignIn(loginForm);
 
         if (res.status === 200) {
-            sessionStorage.setItem('memberId', loginForm.memberId);
+            sessionStorage.setItem('companyId', res.data.companyId);
+            sessionStorage.setItem('companyName', res.data.companyName);
+            sessionStorage.setItem('departmentId', res.data.departmentId);
+            sessionStorage.setItem('departmentName', res.data.departmentName);
+            sessionStorage.setItem('name', res.data.name);
+            sessionStorage.setItem('memberId', res.data.memberId);
             navigate("/member-search", { state: { memberId: loginForm.memberId } })
         }
         else {
