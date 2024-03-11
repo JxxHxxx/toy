@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -15,14 +15,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { postCreateVacation } from '../api/VacationApi';
 import 'dayjs/locale/ko';
+import SearchIcon from '@mui/icons-material/Search';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 600,
-  height: 600,
+  width: 700,
+  height: 700,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -40,12 +41,20 @@ export const VacationRequestModal = () => {
     }
   });
 
+  const [approvalLineOpen, setApprovalLineOpen] = useState(false)
+
+  const handleVacationRequestModalOpen = () => {
+    setOpen(true);
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
 
   const hanleSubmit = () => {
-    postCreateVacation(vacationForm);
+    // BACKEND API 호출
+    // postCreateVacation(vacationForm); 
+    setApprovalLineOpen(true);
     setOpen(false);
   };
 
@@ -91,8 +100,7 @@ export const VacationRequestModal = () => {
             </DemoContainer>
           </LocalizationProvider>
 
-
-          <Button onClick={hanleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>작성 완료</Button>
+          <Button onClick={hanleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>다음</Button>
 
           <IconButton sx={{ position: 'absolute', top: 0, right: 0 }}>
             <CloseIcon onClick={handleClose} />
@@ -102,6 +110,7 @@ export const VacationRequestModal = () => {
           </div>
         </Box>
       </Modal>
+      <ApprovalLineModal open={{approvalLineOpen, setApprovalLineOpen, handleVacationRequestModalOpen}}/>
     </div>
   );
 }
@@ -169,3 +178,57 @@ export const VacationTypeRadioGroup = () => {
     </FormControl>
   );
 }
+
+export const ApprovalLineModal = (props) => {
+  const {approvalLineOpen, setApprovalLineOpen} = props.open;
+  const handleVacationRequestModalOpen = props.open.handleVacationRequestModalOpen;
+
+  const handleSubmit = () => {
+    // 제출 로직
+    setApprovalLineOpen(false);
+  };
+
+  const handleClose = () => {
+    setApprovalLineOpen(false);
+  };
+
+  const handleTest = () => {
+    setApprovalLineOpen(false);
+    handleVacationRequestModalOpen();
+  }
+
+  return (
+    <Fragment>
+      <Modal
+        open={approvalLineOpen}
+        // onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={style}>
+          <h2 id="child-modal-title">결재선 지정</h2>
+          <MemberSearchInput />
+
+          <Button onClick={handleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>상신</Button>
+          <Button onClick={handleTest} sx={{ position: 'absolute', bottom: 10, left: 10 }}>뒤로</Button>
+          <IconButton sx={{ position: 'absolute', top: 0, right: 0 }}>
+            <CloseIcon onClick={handleClose} />
+          </IconButton>
+        </Box>
+      </Modal>
+    </Fragment>
+  )
+}
+
+export const MemberSearchInput = () => {
+  return (
+    <Box sx={{ '& > :not(style)': { m: 1 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+        <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+        <TextField id="input-with-sx" label="사용자 검색" variant="standard" />
+      </Box>
+    </Box>
+  );
+}
+
+
