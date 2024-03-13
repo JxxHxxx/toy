@@ -1,15 +1,4 @@
-const postVacationForm = async function (formData) {
-    await fetch('http://localhost:8080/api/vacations', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-    }).then(() => console.log('request successfully'))
-        .catch(() => console.error('request fail'));
-}
-
-const getVacations = function (memberId) {
+const getMyVacations = function (memberId) {
     return fetch(`http://localhost:8080/api/members/${memberId}/vacations`, {
         method: 'GET',
         headers: {
@@ -27,6 +16,16 @@ const getVacationOne = function (memberId, vacationId) {
         },
     }).then((response) => response.json())
         .catch(() => console.error('request fail'));
+}
+
+const searchVacations = function (companyId, departmentId) {
+    return fetch(`http://localhost:8080/api/vacations?companyId=${companyId}&departmentId=${departmentId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type':'application/json'
+        }
+    }).then((response) => response.json())
+    .catch(() => console.error('request fail'))
 }
 
 const getMemberLeave = function (memberId) {
@@ -52,4 +51,4 @@ const postCreateVacation = function (requestBody) {
 }
 
 
-export { postVacationForm, getVacations, getVacationOne, getMemberLeave, postCreateVacation };
+export { getMyVacations, getVacationOne, searchVacations, getMemberLeave, postCreateVacation };

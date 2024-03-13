@@ -1,72 +1,82 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, Tab, Tabs } from '@mui/material';
+import { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
-export default function MenuAppBar() {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
 
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuListClick = () => {
-        setAnchorEl(null);
-    };
+function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
 
     return (
-        <Box sx={{ flexGrow: 1, mb:2
-        
-        }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        aria-controls={open ? 'demo-positioned-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleMenu}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Menu
-                        id="demo-positioned-menu"
-                        aria-labelledby="demo-positioned-button"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClick={handleMenuListClick}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                    >
-                        <MenuItem component={Link} to="/vacation-request" onClick={handleMenuListClick}>Menu1</MenuItem>
-                        <MenuItem component={Link} to="/vacation-list" onClick={handleMenuListClick}>Menu2</MenuItem>
-                        <MenuItem component={Link} to="/member-search" onClick={handleMenuListClick}>Menu3</MenuItem>
-                    </Menu>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Vacation Manager
-                    </Typography>
-                    <Button component={Link} to="/login" color="inherit">Login</Button>
-                </Toolbar>
-            </AppBar>
-        </Box>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 0.5 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
     );
+}
+
+CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+export const MenuTabs = () => {
+    const [value, setValue] = useState(0);
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+    const [logined, setLogined] = useState(sessionStorage.getItem('memberId') !== null);
+    console.log('render', logined);
+
+    const handleLogin = () => {
+        setLogined(true);
+    };
+
+    const handleLogout = () => {
+        sessionStorage.clear('memberId');
+        setLogined(false);
+    }
+    
+    useEffect(() => {
+        
+    }, [logined])
+
+    return (
+        <Fragment>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="휴가" component={Link} to="/vacations" {...a11yProps(0)} />
+                    <Tab label="관리" component={Link} to="/adminstrations" {...a11yProps(1)} />
+                </Tabs>
+                <Box sx={{ marginRight: '25px', marginLeft: 'auto' }}>
+                    {!logined && <Button onClick={handleLogin} component={Link} to="/login" variant="outlined" color="primary">Login</Button>}
+                    {logined && <Button onClick={handleLogout} color="primary">logout</Button>}
+                </Box>
+            </Box>
+            <CustomTabPanel value={value} index={0}> 
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={1}>
+            </CustomTabPanel>
+        </Fragment>
+    )
 }

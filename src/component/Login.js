@@ -27,6 +27,7 @@ export default function SignIn() {
             memberId: data.get('memberId'),
             password: data.get('password')
         }
+        
         const res = await postSignIn(loginForm);
 
         if (res.status === 200) {
@@ -36,7 +37,7 @@ export default function SignIn() {
             sessionStorage.setItem('departmentName', res.data.departmentName);
             sessionStorage.setItem('name', res.data.name);
             sessionStorage.setItem('memberId', res.data.memberId);
-            navigate("/member-search", { state: { memberId: loginForm.memberId } })
+            navigate("/vacations", { state: { memberId: loginForm.memberId } })
         }
         else {
             alert('비밀번호 틀림');
