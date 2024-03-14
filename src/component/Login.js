@@ -16,12 +16,21 @@ import { postSignIn } from '../api/LoginApi';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/UserContext';
+import { useEffect } from 'react';
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
     const navigate = useNavigate();
     const { setIsLogin } = useContext(AuthContext);
+
+    // URL 로 로그인 컴포넌트 접근 시 처리
+    useEffect(() => {
+        if (sessionStorage.getItem('memberId') !== null) {
+            setIsLogin(true);
+            navigate("/vacations", { state: { memberId: sessionStorage.getItem('memberId') } });
+        }
+    }, []); 
 
     const handleSubmit = async (event) => {
         event.preventDefault();

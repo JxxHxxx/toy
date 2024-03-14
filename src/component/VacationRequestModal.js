@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -13,7 +13,6 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { postCreateVacation } from '../api/VacationApi';
 import 'dayjs/locale/ko';
 import SearchIcon from '@mui/icons-material/Search';
 
