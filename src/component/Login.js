@@ -14,11 +14,14 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { postSignIn } from '../api/LoginApi';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/UserContext';
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
     const navigate = useNavigate();
+    const { setIsLogin } = useContext(AuthContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -37,6 +40,7 @@ export default function SignIn() {
             sessionStorage.setItem('departmentName', res.data.departmentName);
             sessionStorage.setItem('name', res.data.name);
             sessionStorage.setItem('memberId', res.data.memberId);
+            setIsLogin(true);
             navigate("/vacations", { state: { memberId: loginForm.memberId } })
         }
         else {

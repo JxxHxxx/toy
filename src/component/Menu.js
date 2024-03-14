@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { Button, Tab, Tabs } from '@mui/material';
 import { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { useContext } from 'react';
+import { AuthContext } from '../context/UserContext';
 
 
 function CustomTabPanel(props) {
@@ -41,41 +43,36 @@ function a11yProps(index) {
 }
 
 export const MenuTabs = () => {
-    const [value, setValue] = useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-    const [logined, setLogined] = useState(sessionStorage.getItem('memberId') !== null);
-    console.log('render', logined);
+    const [TabPanel, setTabPanel] = useState(0);
+    const { isLogin, setIsLogin } = useContext(AuthContext);
 
-    const handleLogin = () => {
-        setLogined(true);
+    const handleChange = (event, newValue) => {
+        setTabPanel(newValue);
     };
 
     const handleLogout = () => {
-        sessionStorage.clear('memberId');
-        setLogined(false);
+        sessionStorage.clear();
+        setIsLogin(false);
     }
-    
+
     useEffect(() => {
-        
-    }, [logined])
+    }, [isLogin])
 
     return (
         <Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={TabPanel} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="휴가" component={Link} to="/vacations" {...a11yProps(0)} />
                     <Tab label="관리" component={Link} to="/adminstrations" {...a11yProps(1)} />
                 </Tabs>
                 <Box sx={{ marginRight: '25px', marginLeft: 'auto' }}>
-                    {!logined && <Button onClick={handleLogin} component={Link} to="/login" variant="outlined" color="primary">Login</Button>}
-                    {logined && <Button onClick={handleLogout} color="primary">logout</Button>}
+                    {isLogin ? <Button onClick={handleLogout} component={Link} to="/login" variant="outlined" color="primary">logout</Button>
+                        : <Button component={Link} to="/login" variant="outlined" color="primary">Login</Button>}
                 </Box>
             </Box>
-            <CustomTabPanel value={value} index={0}> 
+            <CustomTabPanel value={TabPanel} index={0}>
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
+            <CustomTabPanel value={TabPanel} index={1}>
             </CustomTabPanel>
         </Fragment>
     )
