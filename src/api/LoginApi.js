@@ -11,12 +11,20 @@ const postSignIn = function (loginForm) {
     .catch(() => console.error('request fail'));
 }
 
-const checkAuthenticate = function () {
+const postUserAuthentication = function () {
     return fetch(`http://localhost:8080/api/auth/check-authentication`, {
-        method : 'GET',
+        method : 'POST',
         credentials : 'include',
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            'memberId' : sessionStorage.getItem('memberId'),
+            'companyId' : sessionStorage.getItem('companyId'),
+            'departmentId' : sessionStorage.getItem('departmentId')
+        })
     })
 }
 
 
-export {postSignIn, checkAuthenticate};
+export {postSignIn, postUserAuthentication };

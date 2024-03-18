@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -15,6 +15,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import 'dayjs/locale/ko';
 import SearchIcon from '@mui/icons-material/Search';
+import { postUserAuthentication } from '../api/LoginApi';
+import { findDepartmentMembers } from '../api/MemberApi';
 
 const style = {
   position: 'absolute',
@@ -56,6 +58,10 @@ export const VacationRequestModal = () => {
     setApprovalLineOpen(true);
     setOpen(false);
   };
+
+  useEffect(() => {
+    postUserAuthentication();
+  }, [])
 
   return (
     <div>
@@ -109,7 +115,7 @@ export const VacationRequestModal = () => {
           </div>
         </Box>
       </Modal>
-      <ApprovalLineModal open={{approvalLineOpen, setApprovalLineOpen, handleVacationRequestModalOpen}}/>
+      <ApprovalLineModal open={{ approvalLineOpen, setApprovalLineOpen, handleVacationRequestModalOpen }} />
     </div>
   );
 }
@@ -179,7 +185,7 @@ export const VacationTypeRadioGroup = () => {
 }
 
 export const ApprovalLineModal = (props) => {
-  const {approvalLineOpen, setApprovalLineOpen} = props.open;
+  const { approvalLineOpen, setApprovalLineOpen } = props.open;
   const handleVacationRequestModalOpen = props.open.handleVacationRequestModalOpen;
 
   const handleSubmit = () => {
@@ -207,7 +213,6 @@ export const ApprovalLineModal = (props) => {
         <Box sx={style}>
           <h2 id="child-modal-title">결재선 지정</h2>
           <MemberSearchInput />
-
           <Button onClick={handleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>상신</Button>
           <Button onClick={handleTest} sx={{ position: 'absolute', bottom: 10, left: 10 }}>뒤로</Button>
           <IconButton sx={{ position: 'absolute', top: 0, right: 0 }}>
@@ -220,14 +225,52 @@ export const ApprovalLineModal = (props) => {
 }
 
 export const MemberSearchInput = () => {
+  const [members, setMembers] = useState([]);
+  const [departmentInput, setDepartmentInput] = useState('');
+
+  useEffect(() => {
+    async function fetchMembers() {
+      const departmentId = sessionStorage.getItem('departmentId');
+      const companyId = sessionStorage.getItem('companyId');
+      const findMembers = await findDepartmentMembers(departmentId, companyId);
+      setMembers(findMembers);
+    }
+    fetchMembers();
+  }, []);
+
+  const handleDepartmentInputChange = (event) => {
+    setDepartmentInput(event.target.value);
+  }
+
+  const handleSearchMember = async () => {
+    const companyId = sessionStorage.getItem('companyId');
+    const departmentId = departmentInput;
+    const findMembers = await findDepartmentMembers(departmentId, companyId);
+    setMembers(findMembers);
+  }
+
   return (
-    <Box sx={{ '& > :not(style)': { m: 1 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-        <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-        <TextField id="input-with-sx" label="사용자 검색" variant="standard" />
+    <Fragment>
+      <Box sx={{ '& > :not(style)': { m: 1 } }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+          <TextField id="input-with-sx" label="부서 코드" variant="standard" 
+          value={departmentInput} 
+          onChange={handleDepartmentInputChange}/>
+          <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} 
+          onClick={handleSearchMember} />
+        </Box>
       </Box>
-    </Box>
+      <SearchMemberList searchResult={members} />
+    </Fragment>
   );
 }
 
-
+export const SearchMemberList = (props) => {
+  const members = props.searchResult;
+  return <div>
+    <ul>
+      {members.map((member) => (<li key={member.memberId}>{member.name}/{member.departmentName}</li>)
+      )}
+    </ul>
+  </div>
+}
