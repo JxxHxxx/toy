@@ -10,7 +10,8 @@ export const MemberLeaveInfo = () => {
     });
 
     const location = useLocation();
-    const loginMemberId = location.state?.memberId;
+    // const loginMemberId = location.state?.memberId;
+    const loginMemberId = sessionStorage.getItem('memberId');
 
     const fetchMemberLeave = async () => {
         try {

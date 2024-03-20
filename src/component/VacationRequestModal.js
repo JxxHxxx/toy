@@ -17,6 +17,7 @@ import 'dayjs/locale/ko';
 import SearchIcon from '@mui/icons-material/Search';
 import { postUserAuthentication } from '../api/LoginApi';
 import { findDepartmentMembers } from '../api/MemberApi';
+import { postCreateVacation } from '../api/VacationApi';
 
 const style = {
   position: 'absolute',
@@ -54,7 +55,7 @@ export const VacationRequestModal = () => {
 
   const hanleSubmit = () => {
     // BACKEND API 호출
-    // postCreateVacation(vacationForm); 
+    postCreateVacation(vacationForm); 
     setApprovalLineOpen(true);
     setOpen(false);
   };
