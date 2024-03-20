@@ -18,6 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { postUserAuthentication } from '../api/LoginApi';
 import { findDepartmentMembers } from '../api/MemberApi';
 import { postCreateVacation } from '../api/VacationApi';
+import { enrollApprovalLines, raiseConfirmDucument } from '../api/ConfirmApi';
 
 const style = {
   position: 'absolute',
@@ -42,6 +43,7 @@ export const VacationRequestModal = () => {
       endDateTime: dayjs().add(9, 'hour')
     }
   });
+  const [createdVacation, setCreatedVacation] = useState();
 
   const [approvalLineOpen, setApprovalLineOpen] = useState(false)
 
@@ -53,16 +55,35 @@ export const VacationRequestModal = () => {
     setOpen(false);
   };
 
-  const hanleSubmit = () => {
+  const hanleSubmit = async () => {
     // BACKEND API 호출
-    postCreateVacation(vacationForm); 
+    const createVacationResponse = await postCreateVacation(vacationForm);
+    setCreatedVacation(createVacationResponse);
     setApprovalLineOpen(true);
     setOpen(false);
   };
 
+  // useEffect(() => {
+  //   postUserAuthentication();
+  // }, []);
+
   useEffect(() => {
-    postUserAuthentication();
-  }, [])
+    const fetchUserAuthentication = async () => {
+      try {
+        await postUserAuthentication();
+      } catch (error) {
+        if (error.response && error.response.status !== 200) {
+          // 에러 응답이 있고 상태 코드가 200이 아닌 경우 경고창을 띄웁니다.
+          alert('사용자 인증에 실패했습니다. 다시 시도해주세요.');
+        } else {
+          // 네트워크 오류 등의 경우에도 경고창을 띄웁니다.
+          alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+      }
+    };
+  
+    fetchUserAuthentication();
+  }, []);
 
   return (
     <div>
@@ -111,12 +132,9 @@ export const VacationRequestModal = () => {
           <IconButton sx={{ position: 'absolute', top: 0, right: 0 }}>
             <CloseIcon onClick={handleClose} />
           </IconButton>
-          <div>
-            <h2>결재선 라인 어케 정할지!!</h2>
-          </div>
         </Box>
       </Modal>
-      <ApprovalLineModal open={{ approvalLineOpen, setApprovalLineOpen, handleVacationRequestModalOpen }} />
+      <ApprovalLineModal vacation={ createdVacation } open={{ approvalLineOpen, setApprovalLineOpen, handleVacationRequestModalOpen }} />
     </div>
   );
 }
@@ -188,9 +206,27 @@ export const VacationTypeRadioGroup = () => {
 export const ApprovalLineModal = (props) => {
   const { approvalLineOpen, setApprovalLineOpen } = props.open;
   const handleVacationRequestModalOpen = props.open.handleVacationRequestModalOpen;
+  
+  const [approvalLine, setApprovalLine] = useState([]);
 
-  const handleSubmit = () => {
+  const callbackApprovalLine = (newApprovalLine) => {
+    setApprovalLine(newApprovalLine)
+  };
+
+  const handleConfirmDocumentRaise = async () => {
     // 제출 로직
+    const confirmDocumentType = 'VAC'
+    const companyId = sessionStorage.getItem('companyId');
+    const vacationId = props.vacation.vacationId;
+    const confirmDocumentId = confirmDocumentType + companyId + vacationId;
+
+    await enrollApprovalLines(confirmDocumentId, approvalLine);
+    await raiseConfirmDucument(confirmDocumentId, {
+      companyId : sessionStorage.getItem('companyId'),
+      departmentId : sessionStorage.getItem('departmentId'),
+      requesterId : sessionStorage.getItem('memberId')
+    })
+
     setApprovalLineOpen(false);
   };
 
@@ -213,8 +249,8 @@ export const ApprovalLineModal = (props) => {
       >
         <Box sx={style}>
           <h2 id="child-modal-title">결재선 지정</h2>
-          <MemberSearchInput />
-          <Button onClick={handleSubmit} sx={{ position: 'absolute', bottom: 10, right: 10 }}>상신</Button>
+          <MemberSearchInput callbackApprovalLine={callbackApprovalLine}/>
+          <Button onClick={handleConfirmDocumentRaise} sx={{ position: 'absolute', bottom: 10, right: 10 }}>상신</Button>
           <Button onClick={handleTest} sx={{ position: 'absolute', bottom: 10, left: 10 }}>뒤로</Button>
           <IconButton sx={{ position: 'absolute', top: 0, right: 0 }}>
             <CloseIcon onClick={handleClose} />
@@ -225,7 +261,7 @@ export const ApprovalLineModal = (props) => {
   )
 }
 
-export const MemberSearchInput = () => {
+export const MemberSearchInput = ({ callbackApprovalLine }) => {
   const [members, setMembers] = useState([]);
   const [departmentInput, setDepartmentInput] = useState('');
 
@@ -254,24 +290,70 @@ export const MemberSearchInput = () => {
     <Fragment>
       <Box sx={{ '& > :not(style)': { m: 1 } }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-          <TextField id="input-with-sx" label="부서 코드" variant="standard" 
-          value={departmentInput} 
-          onChange={handleDepartmentInputChange}/>
-          <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} 
-          onClick={handleSearchMember} />
+          <TextField id="input-with-sx" label="부서 코드" variant="standard"
+            value={departmentInput}
+            onChange={handleDepartmentInputChange} />
+          <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }}
+            onClick={handleSearchMember} />
         </Box>
       </Box>
-      <SearchMemberList searchResult={members} />
+      <SearchMemberList callbackApprovalLine={callbackApprovalLine} searchResult={members} />
     </Fragment>
   );
 }
 
 export const SearchMemberList = (props) => {
   const members = props.searchResult;
+  const callbackApprovalLine = props.callbackApprovalLine;
+  const [approvalLines, setApprovalLines] = useState([]);
+  const [approvalOrder, setApprovalOrder] = useState(1);
+
+  const handleAddApprovalLine = (event) => {
+    const approvalLinelistItem = event.currentTarget.parentNode;
+
+    const approvalId = approvalLinelistItem.getAttribute('value');
+
+    const name = approvalLinelistItem.querySelector('#search-member-name').innerText;
+    const departmentName = approvalLinelistItem.querySelector('#search-department-name').innerText;
+
+    setApprovalLines([...approvalLines,
+    { approvalId: approvalId, name: name, departmentName: departmentName, approvalOrder: approvalOrder }]);
+
+    setApprovalOrder(approvalOrder + 1);
+
+    callbackApprovalLine(approvalLines); // 전 생성자가 안됨...
+  }
+
+
   return <div>
+    <h2>부서 검색 결과</h2>
     <ul>
-      {members.map((member) => (<li key={member.memberId}>{member.name}/{member.departmentName}</li>)
+      {members.map((member) => (
+        <li key={member.memberId} value={member.memberId}>
+          <span id="search-member-name">{member.name}</span>/
+          <span id="search-department-name">{member.departmentName}</span>
+          <button onClick={handleAddApprovalLine}>결재선 추가</button>
+        </li>
+      )
       )}
     </ul>
+
+    <ApprovalLineList approvalLines={approvalLines}></ApprovalLineList>
+  </div>
+}
+
+export const ApprovalLineList = (props) => {
+  const approvalLines = props.approvalLines;
+
+  return <div>
+    <h2>결재선 지정자</h2>
+    <ol>
+      {approvalLines.map((approvalLine) => (
+        <li key={approvalLine.approvalId}>
+          <span>{approvalLine.name}</span>/
+          <span>{approvalLine.departmentName}</span>
+        </li>
+      ))}
+    </ol>
   </div>
 }

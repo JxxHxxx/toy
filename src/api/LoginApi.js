@@ -23,7 +23,8 @@ const postUserAuthentication = function () {
             'companyId' : sessionStorage.getItem('companyId'),
             'departmentId' : sessionStorage.getItem('departmentId')
         })
-    })
+    }).then((response) => response.json())
+    .catch(() => console.error('request fail'));
 }
 
 
